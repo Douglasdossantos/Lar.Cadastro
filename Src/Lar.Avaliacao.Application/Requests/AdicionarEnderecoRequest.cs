@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lar.Avaliacao.Application.Requests
 {
-    public class AdicionarEnderecoRequest
+    public record class AdicionarEnderecoRequest
     {
         public string Rua { get; init; } = string.Empty;
         public string Numero { get; init; } = string.Empty;
