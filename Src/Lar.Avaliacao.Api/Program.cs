@@ -84,17 +84,14 @@ try
         });
     });
 
-    // FluentValidation: registra todos os validadores do assembly da Application
     builder.Services.AddValidatorsFromAssemblyContaining<CriarPessoaRequestValidator>();
 
-    // Application + Infrastructure (SQLite, Unit of Work, JWT, hashing, clock)
     builder.Services.AddScoped<IPessoaService, PessoaService>();
     builder.Services.AddScoped<ITelefoneService, TelefoneService>();
     builder.Services.AddScoped<IEnderecoService, EnderecoService>();
     builder.Services.AddScoped<IAutenticacaoService, AutenticacaoService>();
     builder.Services.AddInfrastructure(builder.Configuration);
 
-    // ---------- Autenticação JWT ----------
     var jwtSection = builder.Configuration.GetSection(JwtSettings.SectionName);
     var jwtSettings = jwtSection.Get<JwtSettings>() ?? new JwtSettings();
 
@@ -116,25 +113,21 @@ try
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
                 ClockSkew = TimeSpan.FromMinutes(1)
             };
-            });
+        });
 
         builder.Services.AddAuthorization();
 
         var app = builder.Build();
 
-        // Loga cada requisição (método, rota, status, tempo) automaticamente.
         app.UseSerilogRequestLogging();
 
-        // ---------- Migrations automáticas em desenvolvimento ----------
-        // Em produção, prefira rodar "dotnet ef database update" manualmente/via pipeline.
+   
         if (app.Environment.IsDevelopment())
         {
             using var scope = app.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             db.Database.Migrate();
         }
-
-        // ---------- Pipeline HTTP ----------
 
         app.UseMiddleware<ExceptionMiddleware>();
 
@@ -144,9 +137,6 @@ try
             app.UseSwaggerUI();
         }
 
-        // UseHttpsRedirection é pulado no ambiente "Testing": o TestServer usado pelo
-        // WebApplicationFactory não expõe um endpoint HTTPS real, e o redirect 307
-        // quebraria as chamadas dos testes de integração.
         if (!app.Environment.IsEnvironment("Testing"))
         {
             app.UseHttpsRedirection();
@@ -168,30 +158,3 @@ finally
 }
 
 public partial class Program { }
-
-
-//var builder = WebApplication.CreateBuilder(args);
-
-//// Add services to the container.
-
-//builder.Services.AddControllers();
-//// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
-
-//var app = builder.Build();
-
-//// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
-
-//app.UseHttpsRedirection();
-
-//app.UseAuthorization();
-
-//app.MapControllers();
-
-//app.Run();

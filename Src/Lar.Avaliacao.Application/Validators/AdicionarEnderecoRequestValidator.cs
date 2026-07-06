@@ -1,11 +1,6 @@
 ﻿using FluentValidation;
 using Lar.Avaliacao.Application.Requests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Lar.Avaliacao.Application.Validators
 {
@@ -21,7 +16,7 @@ namespace Lar.Avaliacao.Application.Validators
             RuleFor(x => x.Numero)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage("Número é obrigatório.")
-                .Length(3, 10).WithMessage("Número deve ter entre 3 e 10 caracteres.");
+                .MaximumLength(10).WithMessage("Número deve ter no máximo 10 caracteres.");
 
             RuleFor(x => x.Complemento)
                 .MaximumLength(250).WithMessage("Complemento deve ter no máximo 250 caracteres.");

@@ -9,7 +9,6 @@ namespace Lar.Avaliacao.Api.Controllers
 
     [ApiController]
     [Route("[controller]")]
-   // [Produces("application/json")]
     [AllowAnonymous]
     public class AuthController : ControllerBase
     {

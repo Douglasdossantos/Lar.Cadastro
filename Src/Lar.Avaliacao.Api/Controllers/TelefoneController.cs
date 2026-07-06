@@ -8,7 +8,6 @@ namespace Lar.Avaliacao.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    //[AllowAnonymous]
     [Authorize]
     public class TelefoneController : Controller
     {
